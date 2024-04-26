@@ -99,15 +99,14 @@ def main():
             answers[f"{dimension}-{i}"] = answer
 
     if st.button("Submit"):
-        scores = {
-            "Realistic": sum(answers["Realistic-{}".format(i)] for i in range(1, 11)),
-            "Investigative": sum(answers["Investigative-{}".format(i)] for i in range(1, 11)),
-            "Artistic": sum(answers["Artistic-{}".format(i)] for i in range(1, 11)),
-            "Social": sum(answers["Social-{}".format(i)] for i in range(1, 11)),
-            "Enterprising": sum(answers["Enterprising-{}".format(i)] for i in range(1, 11)),
-        }
-        send_email(scores)
-        st.success("Your assessment has been submitted. Results will be sent to your email.")
-
+    scores = {
+        "Realistic": sum(answers[f"Realistic-{i}"] for i in range(1, 11)),
+        "Investigative": sum(answers[f"Investigative-{i}"] for i in range(1, 11)),
+        "Artistic": sum(answers[f"Artistic-{i}"] for i in range(1, 11)),
+        "Social": sum(answers[f"Social-{i}"] for i in range(1, 11)),
+        "Enterprising": sum(answers[f"Enterprising-{i}"] for i in range(1, 11)),
+    }
+    send_email(scores)
+    st.success("Your assessment has been submitted. Results will be sent to your email.")
 if __name__ == "__main__":
     main()
