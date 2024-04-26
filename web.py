@@ -1,139 +1,113 @@
-class DISCTest:
-    def __init__(self):
-        self.questions = {
-            "Dominance": [
-                "I enjoy taking charge and leading others.",
-                "I often find myself in leadership roles without actively seeking them.",
-                "I prefer making decisions independently rather than consulting others.",
-                "I am assertive and direct in my communication style.",
-                "I feel comfortable expressing my opinions, even if they differ from others.",
-                "I enjoy challenges and am motivated by overcoming obstacles.",
-                "I strive to achieve my goals, even if it means being assertive.",
-                "I have a competitive nature and enjoy competing to win.",
-                "I am not afraid to confront others when necessary.",
-                "I enjoy taking risks and exploring new opportunities.",
-                "I prefer to lead rather than follow in group settings.",
-                "I feel frustrated when others are indecisive or hesitant.",
-                "I am comfortable delegating tasks to others and trusting them to get the job done.",
-                "I am not afraid to speak up and advocate for myself and others.",
-                "I enjoy being in control of situations and outcomes."
-            ],
-            "Influence": [
-                "I enjoy socializing and networking with others.",
-                "I am enthusiastic and outgoing in social situations.",
-                "I prefer working in teams and collaborating with others.",
-                "I enjoy motivating and inspiring others.",
-                "I am good at persuading others to see my point of view.",
-                "I thrive in social environments and enjoy being the center of attention.",
-                "I am often described as charismatic or charming by others.",
-                "I enjoy sharing ideas and brainstorming with others.",
-                "I am skilled at building rapport and forming relationships with diverse individuals.",
-                "I am comfortable speaking in front of large groups.",
-                "I often take on the role of mediator or peacemaker in conflicts.",
-                "I enjoy participating in group activities and social events.",
-                "I am naturally outgoing and find it easy to strike up conversations with strangers.",
-                "I am persuasive and can influence others to take action.",
-                "I enjoy being involved in community or social initiatives."
-            ],
-            "Steadiness": [
-                "I value stability and predictability in my life.",
-                "I am patient and understanding with others.",
-                "I prefer to avoid conflicts and maintain harmony in relationships.",
-                "I am reliable and consistent in my actions.",
-                "I enjoy supporting and helping others in times of need.",
-                "I am calm and composed under pressure.",
-                "I have a strong sense of loyalty to my friends and colleagues.",
-                "I prefer a steady and predictable work environment.",
-                "I tend to stay calm and level-headed in stressful situations.",
-                "I am known for my patience and ability to listen attentively.",
-                "I value traditions and routines in my daily life.",
-                "I avoid making hasty decisions and prefer to think things through carefully.",
-                "I enjoy building long-term relationships with others.",
-                "I am dependable and can be counted on to fulfill my commitments.",
-                "I prefer a work environment where I can focus on one task at a time."
-            ],
-            "Conscientiousness": [
-                "I pay attention to detail and strive for accuracy in my work.",
-                "I am organized and methodical in my approach to tasks.",
-                "I prefer following established procedures and guidelines.",
-                "I am focused and disciplined in achieving my objectives.",
-                "I take pride in completing tasks thoroughly and efficiently.",
-                "I am self-disciplined and have high standards for myself.",
-                "I enjoy planning and organizing my work schedule.",
-                "I am reliable and can be trusted to meet deadlines.",
-                "I prefer to have a clear plan before starting a project.",
-                "I enjoy learning and continuously strive to improve my skills.",
-                "I am conscientious about my work and pay attention to quality.",
-                "I am detail-oriented and notice errors or inconsistencies easily.",
-                "I dislike leaving tasks unfinished and prefer closure.",
-                "I enjoy organizing information and creating structured systems.",
-                "I am thorough in my approach to problem-solving and decision-making."
-            ]
-        }
+import streamlit as st
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
-    def take_test(self):
-        scores = {}
-        for dimension, dimension_questions in self.questions.items():
-            print(f"\n{dimension} Questions:")
-            dimension_score = 0
-            for question in dimension_questions:
-                print(question)
-                score = int(input("Rating (1-5): "))
-                dimension_score += score
-            scores[dimension] = dimension_score
-        return scores
+def send_email(scores):
+    email = "your_email@gmail.com"  # Your email address
+    password = "your_password"      # Your email password
 
-    def interpret_scores(self, scores):
-        personality_profile = {}
-        for dimension, score in scores.items():
-            if score <= 45:
-                personality_profile[dimension] = "Low"
-            elif 45 < score <= 75:
-                personality_profile[dimension] = "Moderate"
-            else:
-                personality_profile[dimension] = "High"
-        return personality_profile
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(email, password)
 
-    def generate_report(self, scores, personality_profile):
-        print("\n--- Personality Profile ---")
-        for dimension, score in scores.items():
-            print(f"{dimension}: {score} ({personality_profile[dimension]} level)")
+    msg = MIMEMultipart()
+    msg['From'] = email
+    msg['To'] = "kavitarai.99@gmail.com"
+    msg['Subject'] = "Occupational Interest Assessment Results"
 
-    def suggest_profession(self, personality_profile):
-        professions = {
-            "Dominance": {
-                "Low": "Team Member, Customer Service Representative",
-                "Moderate": "Project Manager, Sales Manager",
-                "High": "Entrepreneur, CEO"
-            },
-            "Influence": {
-                "Low": "Accountant, Data Analyst",
-                "Moderate": "Marketing Specialist, Public Relations Manager",
-                "High": "Sales Executive, Event Planner"
-            },
-            "Steadiness": {
-                "Low": "Stock Trader, Real Estate Agent",
-                "Moderate": "Human Resources Manager, Counselor",
-                "High": "Nurse, Social Worker"
-            },
-            "Conscientiousness": {
-                "Low": "Artist, Tour Guide",
-                "Moderate": "Project Coordinator, Quality Assurance Specialist",
-                "High": "Financial Analyst, Research Scientist"
-            }
-        }
-        print("\n--- Recommended Professions ---")
-        for dimension, level in personality_profile.items():
-            print(f"{dimension}: {professions[dimension][level]}")
+    body = f"Realistic: {scores['Realistic']}\nInvestigative: {scores['Investigative']}\nArtistic: {scores['Artistic']}\nSocial: {scores['Social']}\nEnterprising: {scores['Enterprising']}"
+    msg.attach(MIMEText(body, 'plain'))
+
+    server.send_message(msg)
+    server.quit()
 
 def main():
-    test = DISCTest()
-    print("Welcome to the DISC Personality Test!")
-    print("Answer each question on a scale from 1 to 5.")
-    scores = test.take_test()
-    personality_profile = test.interpret_scores(scores)
-    test.generate_report(scores, personality_profile)
-    test.suggest_profession(personality_profile)
+    st.title("Occupational Interest Assessment")
+
+    st.write("Instructions: Please answer the following questions based on how strongly you agree or disagree.")
+    st.write("1. Strongly Disagree\n2. Disagree\n3. Neutral\n4. Agree\n5. Strongly Agree")
+
+    questions = {
+        "Realistic (Doer)": [
+            "I enjoy working with my hands to create or fix things.",
+            "I prefer outdoor activities over indoor activities.",
+            "I like to solve practical problems using tools or equipment.",
+            "I am interested in careers that involve physical activity or manual labor.",
+            "I prefer learning through hands-on experiences rather than reading or listening.",
+            "I am good at building or repairing things.",
+            "I enjoy working with machines or mechanical systems.",
+            "I like jobs that have clear and tangible results.",
+            "I am interested in careers related to agriculture, construction, or mechanics.",
+            "I enjoy physical challenges and sports."
+        ],
+        "Investigative (Thinker)": [
+            "I am curious about how things work and enjoy figuring out puzzles.",
+            "I enjoy analyzing data or information to find patterns or solutions.",
+            "I prefer reading and researching to discover new information.",
+            "I like to solve complex problems using logic and reasoning.",
+            "I enjoy working independently to investigate questions or hypotheses.",
+            "I am good at understanding abstract concepts or theories.",
+            "I enjoy conducting experiments or conducting research studies.",
+            "I like to explore new ideas or theories.",
+            "I am interested in careers related to science, technology, or research.",
+            "I enjoy learning about how the world works through observation and analysis."
+        ],
+        "Artistic (Creator)": [
+            "I enjoy expressing myself through creative outlets like art or music.",
+            "I prefer jobs that allow me to use my imagination and creativity.",
+            "I like to think outside the box and come up with innovative ideas.",
+            "I enjoy creating visual or performing arts.",
+            "I am good at thinking of unique solutions to problems.",
+            "I like jobs that allow me to express my individuality and originality.",
+            "I enjoy activities like drawing, painting, or writing.",
+            "I like to design or create things that are visually appealing.",
+            "I am interested in careers related to design, media, or entertainment.",
+            "I enjoy attending artistic events or performances."
+        ],
+        "Social (Helper)": [
+            "I enjoy working with people and helping them solve problems.",
+            "I prefer jobs that involve interacting with others and building relationships.",
+            "I am good at listening to others and offering support or advice.",
+            "I like to collaborate with others to achieve common goals.",
+            "I enjoy teaching, mentoring, or coaching others.",
+            "I am interested in understanding people's emotions and motivations.",
+            "I like to volunteer or participate in community service activities.",
+            "I enjoy working in groups or teams to accomplish tasks.",
+            "I am interested in careers related to counseling, healthcare, or education.",
+            "I feel fulfilled when I can make a positive impact on others' lives."
+        ],
+        "Enterprising (Persuader)": [
+            "I enjoy taking initiative and leading others towards a common goal.",
+            "I prefer jobs that involve taking risks and making decisions.",
+            "I am good at persuading others to see my point of view or take action.",
+            "I like to set goals and work towards achieving them.",
+            "I enjoy networking and building connections with others.",
+            "I am interested in starting my own business or organization.",
+            "I like to negotiate and influence outcomes in my favor.",
+            "I enjoy competing with others to achieve success.",
+            "I am interested in careers related to sales, marketing, or entrepreneurship.",
+            "I feel energized when I can take charge and make things happen."
+        ]
+    }
+
+    answers = {}
+    for dimension, dimension_questions in questions.items():
+        st.subheader(dimension)
+        for i, question in enumerate(dimension_questions, start=1):
+            answer = st.radio(f"{i}. {question}", options=[1, 2, 3, 4, 5], key=f"{dimension}-{i}")
+            answers[f"{dimension}-{i}"] = answer
+
+    if st.button("Submit"):
+        scores = {
+            "Realistic": sum(answers["Realistic-{}".format(i)] for i in range(1, 11)),
+            "Investigative": sum(answers["Investigative-{}".format(i)] for i in range(1, 11)),
+            "Artistic": sum(answers["Artistic-{}".format(i)] for i in range(1, 11)),
+            "Social": sum(answers["Social-{}".format(i)] for i in range(1, 11)),
+            "Enterprising": sum(answers["Enterprising-{}".format(i)] for i in range(1, 11)),
+        }
+        send_email(scores)
+        st.success("Your assessment has been submitted. Results will be sent to your email.")
 
 if __name__ == "__main__":
     main()
